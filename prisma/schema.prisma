@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReferralSource {
+  SELF_REFERRAL
+  FACEBOOK
+  WORD_OF_MOUTH
+  EXISTING_SERVICE_PROVIDER
+  SCHOOL
+  GP
+  OTHER
+}
+
+enum AssetCategory {
+  LOGO
+  INFOGRAPHIC
+  PHOTO
+  TEMPLATE
+}
+
+enum ConsentStatus {
+  NOT_REQUIRED
+  OBTAINED
+  NOT_OBTAINED
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model FamilyRecord {
+  id                    String         @id @default(cuid())
+  dateJoined            DateTime
+  referralSource        ReferralSource
+  attendedFirstSession  Boolean
+  stillAttending        Boolean
+  notes                 String?
+  deletedAt             DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+}
+
+model MonthlyMetrics {
+  id                           String   @id @default(cuid())
+  month                        DateTime @unique
+  facebookFollowers            Int
+  facebookEngagement           Int?
+  sessionsDelivered            Int
+  familiesAttendingSessions    Int
+  volunteerCount               Int
+  fundingApplicationsSubmitted Int
+  fundingAwarded               Float
+  deletedAt                    DateTime?
+  createdAt                    DateTime @default(now())
+  updatedAt                    DateTime @updatedAt
+}
+
+model AwarenessEvent {
+  id             String   @id @default(cuid())
+  title          String
+  eventDate      DateTime
+  notes          String?
+  draftIdeas     String?
+  resourceLinks  String[]
+  artworkName    String?
+  artworkMime    String?
+  artworkData    Bytes?
+  didWePost      Boolean  @default(false)
+  deletedAt      DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Asset {
+  id            String        @id @default(cuid())
+  title         String
+  category      AssetCategory
+  fileName      String
+  mimeType      String
+  fileData      Bytes
+  consentStatus ConsentStatus
+  notes         String?
+  uploadedAt    DateTime      @default(now())
+  deletedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model AppSetting {
+  id                 String   @id @default(cuid())
+  retentionYears     Int      @default(3)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
