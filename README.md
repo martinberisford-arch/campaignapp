@@ -69,6 +69,23 @@ Default seeded admin login:
 5. Set build command `npm run build`.
 6. Deploy.
 
+
+## Vercel Deployment Troubleshooting
+
+If you saw deployment errors previously, do the following:
+
+1. In Vercel **Project Settings → Environment Variables**, set:
+   - `DATABASE_URL`
+   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_URL` (set to your production URL, e.g. `https://your-app.vercel.app`)
+2. In Vercel **Build & Development Settings**, keep build command as:
+   - `npm run build`
+3. Redeploy. This codebase removes `pdfkit` to avoid the `fontkit/iconv-lite` bundling error.
+4. If Prisma complains at runtime, run migrations from your CI/local machine and redeploy:
+   - `npx prisma migrate deploy`
+5. Optional post-deploy seed (for first-time demo data only):
+   - `npm run prisma:seed`
+
 ## Data Protection Notes
 
 - System intentionally stores no family names, diagnoses, or medical details.
