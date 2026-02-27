@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const rows = await prisma.familyRecord.findMany({ where: { deletedAt: null } });
   const count = new Map<string, number>();

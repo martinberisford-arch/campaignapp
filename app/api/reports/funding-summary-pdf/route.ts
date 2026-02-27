@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { referralSourceLabels } from "@/utils/constants";
 import { buildSimplePdf } from "@/utils/pdf";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const since = new Date();
   since.setMonth(since.getMonth() - 12);

@@ -62,29 +62,51 @@ Default seeded admin login:
 
 ## Vercel Deployment
 
-1. Push to Git repository.
-2. Create Vercel project.
-3. Add environment variables from `.env.example`.
-4. Attach PostgreSQL database and set `DATABASE_URL`.
-5. Set build command `npm run build`.
-6. Deploy.
-
-
-## Vercel Deployment Troubleshooting
-
-If you saw deployment errors previously, do the following:
-
-1. In Vercel **Project Settings → Environment Variables**, set:
+1. Push this repo to GitHub.
+2. In Vercel, create a new project and import the repo.
+3. In **Project → Settings → Environment Variables**, add:
    - `DATABASE_URL`
+     - Get this from your Postgres provider connection string.
+     - Vercel Postgres path: **Storage → Postgres → .env.local** and copy `POSTGRES_PRISMA_URL`/`DATABASE_URL`.
    - `NEXTAUTH_SECRET`
-   - `NEXTAUTH_URL` (set to your production URL, e.g. `https://your-app.vercel.app`)
-2. In Vercel **Build & Development Settings**, keep build command as:
-   - `npm run build`
-3. Redeploy. This codebase removes `pdfkit` to avoid the `fontkit/iconv-lite` bundling error.
-4. If Prisma complains at runtime, run migrations from your CI/local machine and redeploy:
-   - `npx prisma migrate deploy`
-5. Optional post-deploy seed (for first-time demo data only):
-   - `npm run prisma:seed`
+     - Generate locally with:
+       ```bash
+       openssl rand -base64 32
+       ```
+     - Paste the generated value.
+   - `NEXTAUTH_URL`
+     - Set to your live app URL, for example: `https://campaignapp.vercel.app`.
+4. In **Project → Settings → Build & Development Settings**:
+   - Install Command: `npm install`
+   - Build Command: `npm run build`
+5. Deploy.
+6. Run production migrations (after first deploy and each schema change):
+   ```bash
+   npx prisma migrate deploy
+   ```
+7. Optional one-time sample data seed:
+   ```bash
+   npm run prisma:seed
+   ```
+
+### Optional: Upstash Redis / KV
+You do **not** need Upstash for the current app features. The dashboard stores data in PostgreSQL via Prisma.
+
+If you want to keep Upstash configured in Vercel for future features, add these env vars in **Project → Settings → Environment Variables**:
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+- `KV_REST_API_READ_ONLY_TOKEN`
+- `KV_URL`
+- `REDIS_URL`
+
+Important: if tokens were pasted in chat or committed anywhere, rotate them in Upstash now:
+1. Upstash Console → your database → **REST Tokens** → regenerate tokens.
+2. Upstash Console → rotate Redis password/connection string.
+3. Update Vercel env vars with the new values.
+
+### Notes for known build issues
+- The PDF export no longer uses `pdfkit`, preventing `fontkit/iconv-lite` deployment failures.
+- API routes are forced dynamic to avoid static build data-collection failures on dynamic API endpoints.
 
 ## Data Protection Notes
 

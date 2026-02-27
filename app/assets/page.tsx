@@ -7,7 +7,10 @@ import { requireSession } from "@/lib/session";
 
 async function addAsset(formData: FormData) {
   "use server";
-  const file = formData.get("file") as File;
+  const file = formData.get("file") as File | null;
+  if (!file || file.size === 0) {
+    return;
+  }
   const fileBuffer = Buffer.from(await file.arrayBuffer());
   await prisma.asset.create({
     data: {
@@ -64,7 +67,9 @@ export default async function AssetsPage({ searchParams }: { searchParams?: { q?
       </SectionCard>
       <SectionCard title="Asset list">
         <div className="space-y-2">
-          {assets.map((asset) => (
+          {assets.length === 0 ? (
+            <p className="text-slate-500">No assets found yet. Upload your first logo, template, or photo above.</p>
+          ) : assets.map((asset) => (
             <div key={asset.id} className="border rounded-lg p-3 flex justify-between items-center">
               <div>
                 <p className="font-medium">{asset.title}</p>
