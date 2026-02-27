@@ -7,6 +7,7 @@ import { MetricsForm } from "@/components/metrics-form";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
 export default async function MetricsPage() {
   await requireSession();
   const metrics = await prisma.monthlyMetrics.findMany({ where: { deletedAt: null }, orderBy: { month: "asc" } });

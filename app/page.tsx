@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 import { referralSourceLabels } from "@/utils/constants";
 
+export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   await requireSession();
   const [families, metrics, events] = await Promise.all([

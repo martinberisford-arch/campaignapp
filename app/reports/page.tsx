@@ -3,6 +3,7 @@ import { AppShell } from "@/components/app-shell";
 import { SectionCard } from "@/components/cards";
 import { requireSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
 export default async function ReportsPage() {
   await requireSession();
   return (

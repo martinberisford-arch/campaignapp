@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 import { referralSourceLabels } from "@/utils/constants";
 
+export const dynamic = "force-dynamic";
 async function addFamily(formData: FormData) {
   "use server";
   await prisma.familyRecord.create({

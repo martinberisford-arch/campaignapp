@@ -5,6 +5,7 @@ import { SectionCard } from "@/components/cards";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
 async function saveEvent(formData: FormData) {
   "use server";
   const file = formData.get("artwork") as File;

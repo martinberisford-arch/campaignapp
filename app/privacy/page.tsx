@@ -4,6 +4,7 @@ import { SectionCard } from "@/components/cards";
 import { prisma } from "@/lib/prisma";
 import { requireSession } from "@/lib/session";
 
+export const dynamic = "force-dynamic";
 async function updateRetention(formData: FormData) {
   "use server";
   const value = Number(formData.get("retentionYears"));
