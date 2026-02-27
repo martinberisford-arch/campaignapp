@@ -68,13 +68,21 @@ Default seeded admin login:
    - `DATABASE_URL`
      - Get this from your Postgres provider connection string.
      - Vercel Postgres path: **Storage → Postgres → .env.local** and copy `POSTGRES_PRISMA_URL`/`DATABASE_URL`.
+<<<<<<< codex/build-internal-dashboard-for-charity-25g2bo
+   - `SESSION_SECRET`
+=======
    - `NEXTAUTH_SECRET`
+>>>>>>> main
      - Generate locally with:
        ```bash
        openssl rand -base64 32
        ```
      - Paste the generated value.
+<<<<<<< codex/build-internal-dashboard-for-charity-25g2bo
+   - `NEXTAUTH_URL (optional legacy, not required)`
+=======
    - `NEXTAUTH_URL (kept for deployment compatibility)`
+>>>>>>> main
      - Set to your live app URL, for example: `https://campaignapp.vercel.app`.
 4. In **Project → Settings → Build & Development Settings**:
    - Install Command: `npm install`
@@ -108,8 +116,13 @@ Important: if tokens were pasted in chat or committed anywhere, rotate them in U
 ### Which env vars are actually needed?
 For this app, the required production env vars are:
 - `DATABASE_URL`
+<<<<<<< codex/build-internal-dashboard-for-charity-25g2bo
+- `SESSION_SECRET`
+- `NEXTAUTH_URL (optional legacy, not required)`
+=======
 - `NEXTAUTH_SECRET`
 - `NEXTAUTH_URL (kept for deployment compatibility)`
+>>>>>>> main
 
 These variables from your other project are **not used by this codebase** and will not fix NextAuth build issues by themselves:
 - `QSTASH_NEXT_SIGNING_KEY`
@@ -122,6 +135,19 @@ These variables from your other project are **not used by this codebase** and wi
 If you already added those, you can keep them, but they are optional/unused here.
 
 If auth build errors continue:
+<<<<<<< codex/build-internal-dashboard-for-charity-25g2bo
+1. Confirm `SESSION_SECRET` exists in Vercel for Production.
+2. Confirm `NEXTAUTH_URL (optional legacy, not required)` exactly matches deployed domain (including `https://`).
+3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
+
+
+
+### Removed functionality tied to repeated build failures
+- Removed `/api/auth/[...nextauth]` compatibility endpoint entirely.
+- Removed `/api/auth` allow-listing from middleware.
+- Authentication now uses only `/login` + signed `charity_session` cookie flow.
+
+=======
 1. Confirm `NEXTAUTH_SECRET` exists in Vercel for Production.
 2. Confirm `NEXTAUTH_URL (kept for deployment compatibility)` exactly matches deployed domain (including `https://`).
 3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
@@ -137,6 +163,7 @@ Do this once:
 3. Ensure branch + commit match latest main head.
 
 =======
+>>>>>>> main
 >>>>>>> main
 ### Notes for known build issues
 - The PDF export no longer uses `pdfkit`, preventing `fontkit/iconv-lite` deployment failures.
