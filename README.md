@@ -104,6 +104,28 @@ Important: if tokens were pasted in chat or committed anywhere, rotate them in U
 2. Upstash Console → rotate Redis password/connection string.
 3. Update Vercel env vars with the new values.
 
+
+### Which env vars are actually needed?
+For this app, the required production env vars are:
+- `DATABASE_URL`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+
+These variables from your other project are **not used by this codebase** and will not fix NextAuth build issues by themselves:
+- `QSTASH_NEXT_SIGNING_KEY`
+- `QSTASH_CURRENT_SIGNING_KEY`
+- `QSTASH_TOKEN`
+- `UPSTASH_REDIS_REST_TOKEN`
+- `UPSTASH_REDIS_REST_URL`
+- `REDIS_URL`
+
+If you already added those, you can keep them, but they are optional/unused here.
+
+If NextAuth build errors continue:
+1. Confirm `NEXTAUTH_SECRET` exists in Vercel for Production.
+2. Confirm `NEXTAUTH_URL` exactly matches deployed domain (including `https://`).
+3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
+
 ### Notes for known build issues
 - The PDF export no longer uses `pdfkit`, preventing `fontkit/iconv-lite` deployment failures.
 - API routes are forced dynamic to avoid static build data-collection failures on dynamic API endpoints.
