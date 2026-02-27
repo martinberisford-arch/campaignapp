@@ -126,6 +126,18 @@ If auth build errors continue:
 2. Confirm `NEXTAUTH_URL (kept for deployment compatibility)` exactly matches deployed domain (including `https://`).
 3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
 
+<<<<<<< codex/build-internal-dashboard-for-charity-yjr711
+
+### If Vercel still reports /api/auth/[...nextauth]
+If Vercel keeps showing an old NextAuth build error, it is usually deploying an older commit or stale build cache.
+
+Do this once:
+1. Confirm the deployment commit includes `app/api/auth/[...nextauth]/route.ts` as a compatibility stub (no `next-auth` import).
+2. In Vercel Deployments, click **Redeploy** and enable **Use existing Build Cache: Off**.
+3. Ensure branch + commit match latest main head.
+
+=======
+>>>>>>> main
 ### Notes for known build issues
 - The PDF export no longer uses `pdfkit`, preventing `fontkit/iconv-lite` deployment failures.
 - API routes are forced dynamic to avoid static build data-collection failures on dynamic API endpoints.
