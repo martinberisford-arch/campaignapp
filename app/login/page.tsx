@@ -1,39 +1,17 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { authenticateUser, createSessionToken, SESSION_COOKIE, SESSION_TTL_SECONDS } from "@/lib/auth";
+import { createSessionToken, SESSION_COOKIE, validateCredentials } from "@/lib/auth";
 
-async function loginAction(formData: FormData) {
+async function login(formData: FormData) {
   "use server";
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
-
-  const user = await authenticateUser(email, password);
-  if (!user) {
-    redirect("/login?error=1");
-  }
-
-  const token = createSessionToken(user.id, user.role);
-  cookies().set(SESSION_COOKIE, token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_TTL_SECONDS
-  });
-
+  const user = await validateCredentials(email, password);
+  if (!user) redirect("/login?error=1");
+  cookies().set(SESSION_COOKIE, createSessionToken(user.id, user.role), { path: "/", httpOnly: true, sameSite: "lax", secure: process.env.NODE_ENV === "production" });
   redirect("/");
 }
 
 export default function LoginPage({ searchParams }: { searchParams?: { error?: string } }) {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <form className="bg-white p-8 rounded-xl border border-slate-200 w-full max-w-md space-y-4" action={loginAction}>
-        <h1 className="text-2xl font-semibold text-primary">Charity Dashboard Login</h1>
-        <input name="email" type="email" placeholder="Email" required />
-        <input name="password" type="password" placeholder="Password" required />
-        {searchParams?.error && <p className="text-red-600 text-sm">Login failed. Please try again.</p>}
-        <button className="w-full bg-primary text-white text-lg">Sign in</button>
-      </form>
-    </div>
-  );
+  return <div className="min-h-screen grid place-items-center p-4"><form action={login} className="bg-white border rounded p-6 w-full max-w-md space-y-3"><h1 className="text-xl font-semibold">Sign in</h1><input name="email" type="email" placeholder="Email" required /><input name="password" type="password" placeholder="Password" required />{searchParams?.error && <p className="text-red-600 text-sm">Invalid login.</p>}<button className="w-full bg-teal-700 text-white">Sign in</button></form></div>;
 }

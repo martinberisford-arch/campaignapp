@@ -1,155 +1,37 @@
-# Hyper-Local Charity Comms & Impact Dashboard
+# Charity Impact Dashboard (Rebuilt Clean)
 
-A warm, lightweight internal dashboard for neurodivergent-family support charities. It focuses on continuity, evidence gathering, and simple reporting.
+This project has been rebuilt from scratch to remove the repeated auth/build issues and keep deployment simple.
 
-## Features
-
-- Family Referral Tracker (anonymised records only)
-- Monthly Engagement Metrics with CSV export
-- Awareness Calendar with recurring annual events
-- Asset Library with upload/search/filter/download
-- Funding Evidence report exports (PDF + CSV)
-- Privacy notice and retention settings (default 3 years)
-- Secure cookie-based authentication with Admin/User roles
-- Soft delete on records
-
-## Tech Stack
-
-- Next.js 14 + TypeScript
-- Prisma ORM
-- PostgreSQL (Vercel compatible)
-- TailwindCSS
+## Stack
+- Next.js 14
+- TypeScript
+- Prisma + PostgreSQL
+- Tailwind
 - Recharts
-- React Hook Form + Zod-ready structure
 
-## Project Structure
-
-- `app/`
-- `components/`
-- `prisma/`
-- `lib/`
-- `types/`
-- `utils/`
+## Authentication
+- Cookie-based session only (`charity_session`)
+- No NextAuth route or middleware dependency
+- Login page: `/login`
 
 ## Setup
+1. `cp .env.example .env`
+2. `npm install`
+3. `npm run prisma:generate`
+4. `npm run prisma:migrate`
+5. `npm run prisma:seed`
+6. `npm run dev`
 
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
-2. Copy env file:
-   ```bash
-   cp .env.example .env
-   ```
-3. Run prisma generate and migrate:
-   ```bash
-   npm run prisma:generate
-   npm run prisma:migrate
-   ```
-4. Seed starter data:
-   ```bash
-   npm run prisma:seed
-   ```
-5. Start app:
-   ```bash
-   npm run dev
-   ```
+Default login:
+- `admin@charity.local`
+- `admin12345`
 
-Default seeded admin login:
-
-- Email: `admin@charity.local`
-- Password: `admin12345`
-
-## Vercel Deployment
-
-1. Push this repo to GitHub.
-2. In Vercel, create a new project and import the repo.
-3. In **Project → Settings → Environment Variables**, add:
-   - `DATABASE_URL`
-     - Get this from your Postgres provider connection string.
-     - Vercel Postgres path: **Storage → Postgres → .env.local** and copy `POSTGRES_PRISMA_URL`/`DATABASE_URL`.
-   - `SESSION_SECRET`
-     - Generate locally with:
-       ```bash
-       openssl rand -base64 32
-       ```
-     - Paste the generated value.
-   - `NEXTAUTH_URL (optional legacy, not required)`
-     - Set to your live app URL, for example: `https://campaignapp.vercel.app`.
-4. In **Project → Settings → Build & Development Settings**:
-   - Install Command: `npm install`
-   - Build Command: `npm run build`
-5. Deploy.
-6. Run production migrations (after first deploy and each schema change):
-   ```bash
-   npx prisma migrate deploy
-   ```
-7. Optional one-time sample data seed:
-   ```bash
-   npm run prisma:seed
-   ```
-
-### Optional: Upstash Redis / KV
-You do **not** need Upstash for the current app features. The dashboard stores data in PostgreSQL via Prisma.
-
-If you want to keep Upstash configured in Vercel for future features, add these env vars in **Project → Settings → Environment Variables**:
-- `KV_REST_API_URL`
-- `KV_REST_API_TOKEN`
-- `KV_REST_API_READ_ONLY_TOKEN`
-- `KV_URL`
-- `REDIS_URL`
-
-Important: if tokens were pasted in chat or committed anywhere, rotate them in Upstash now:
-1. Upstash Console → your database → **REST Tokens** → regenerate tokens.
-2. Upstash Console → rotate Redis password/connection string.
-3. Update Vercel env vars with the new values.
-
-
-### Which env vars are actually needed?
-For this app, the required production env vars are:
+## Required env vars
 - `DATABASE_URL`
 - `SESSION_SECRET`
-- `NEXTAUTH_URL (optional legacy, not required)`
 
-These variables from your other project are **not used by this codebase** and will not fix NextAuth build issues by themselves:
-- `QSTASH_NEXT_SIGNING_KEY`
-- `QSTASH_CURRENT_SIGNING_KEY`
-- `QSTASH_TOKEN`
-- `UPSTASH_REDIS_REST_TOKEN`
-- `UPSTASH_REDIS_REST_URL`
-- `REDIS_URL`
-
-If you already added those, you can keep them, but they are optional/unused here.
-
-If auth build errors continue:
-1. Confirm `SESSION_SECRET` exists in Vercel for Production.
-2. Confirm `NEXTAUTH_URL (optional legacy, not required)` exactly matches deployed domain (including `https://`).
-3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
-
-
-
-### Removed functionality tied to repeated build failures
-- Removed `/api/auth/[...nextauth]` compatibility endpoint entirely.
-- Removed `/api/auth` allow-listing from middleware.
-- Authentication now uses only `/login` + signed `charity_session` cookie flow.
-
-### Notes for known build issues
-- The PDF export no longer uses `pdfkit`, preventing `fontkit/iconv-lite` deployment failures.
-- API routes are forced dynamic to avoid static build data-collection failures on dynamic API endpoints.
-
-## Data Protection Notes
-
-- System intentionally stores no family names, diagnoses, or medical details.
-- Notes fields are optional and anonymised.
-- Soft delete is used for continuity and audit safety.
-- Retention policy defaults to 3 years and is configurable in app.
-
-## Using for Funding Bids
-
-Use **Reports** page to generate:
-
-- 12-month impact summary PDF narrative
-- Referral source CSV breakdown
-- Monthly metrics CSV
-
-These outputs can be attached directly to funding applications.
+## Vercel deploy
+- Build command: `npm run build`
+- Install command: `npm install`
+- Add required env vars in Project Settings
+- Run `npx prisma migrate deploy` for production database

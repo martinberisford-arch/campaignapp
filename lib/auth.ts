@@ -1,65 +1,42 @@
-import { compare } from "bcryptjs";
 import { createHmac, timingSafeEqual } from "crypto";
+import { compare } from "bcryptjs";
 
 const SESSION_COOKIE = "charity_session";
-const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 
-type SessionPayload = {
-  uid: string;
-  role: string;
-  exp: number;
-};
+type Session = { uid: string; role: string; exp: number };
 
-function getSessionSecret() {
-  return process.env.SESSION_SECRET ?? process.env.NEXTAUTH_SECRET ?? "replace-this-secret-in-vercel";
+function secret() {
+  return process.env.SESSION_SECRET ?? "replace-with-strong-random-string";
 }
 
-function encodeBase64Url(value: string) {
-  return Buffer.from(value).toString("base64url");
-}
-
-function decodeBase64Url(value: string) {
-  return Buffer.from(value, "base64url").toString("utf8");
-}
-
-function signPayload(payloadEncoded: string) {
-  return createHmac("sha256", getSessionSecret()).update(payloadEncoded).digest("base64url");
+function sign(payload: string) {
+  return createHmac("sha256", secret()).update(payload).digest("base64url");
 }
 
 export function createSessionToken(uid: string, role: string) {
-  const payload: SessionPayload = {
-    uid,
-    role,
-    exp: Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS
-  };
-  const payloadEncoded = encodeBase64Url(JSON.stringify(payload));
-  const signature = signPayload(payloadEncoded);
-  return `${payloadEncoded}.${signature}`;
+  const payload = Buffer.from(JSON.stringify({ uid, role, exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 7 })).toString("base64url");
+  return `${payload}.${sign(payload)}`;
 }
 
-export function verifySessionToken(token: string): SessionPayload | null {
-  const [payloadEncoded, signature] = token.split(".");
-  if (!payloadEncoded || !signature) return null;
-
-  const expected = signPayload(payloadEncoded);
-  const actualBuffer = Buffer.from(signature);
-  const expectedBuffer = Buffer.from(expected);
-
-  if (actualBuffer.length !== expectedBuffer.length) return null;
-  if (!timingSafeEqual(actualBuffer, expectedBuffer)) return null;
-
-  const payload = JSON.parse(decodeBase64Url(payloadEncoded)) as SessionPayload;
-  if (payload.exp < Math.floor(Date.now() / 1000)) return null;
-  return payload;
+export function readSession(token?: string): Session | null {
+  if (!token) return null;
+  const [payload, signature] = token.split(".");
+  if (!payload || !signature) return null;
+  const expected = sign(payload);
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+  const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as Session;
+  if (parsed.exp < Math.floor(Date.now() / 1000)) return null;
+  return parsed;
 }
 
-export async function authenticateUser(email: string, password: string) {
+export async function validateCredentials(email: string, password: string) {
   const { prisma } = await import("@/lib/prisma");
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) return null;
-  const valid = await compare(password, user.passwordHash);
-  if (!valid) return null;
-  return user;
+  const ok = await compare(password, user.passwordHash);
+  return ok ? user : null;
 }
 
-export { SESSION_COOKIE, SESSION_TTL_SECONDS };
+export { SESSION_COOKIE };

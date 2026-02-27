@@ -4,18 +4,8 @@ import { SectionCard } from "@/components/cards";
 import { requireSession } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
-export default async function ReportsPage() {
-  await requireSession();
-  return (
-    <AppShell>
-      <h1 className="text-3xl font-semibold">Funding Evidence Export Tool</h1>
-      <SectionCard title="Generate reports">
-        <div className="flex flex-wrap gap-3">
-          <Link className="bg-primary text-white" href="/api/reports/funding-summary-pdf">Generate Funding Summary PDF</Link>
-          <Link className="bg-muted" href="/api/reports/referral-csv">Referral source CSV</Link>
-          <Link className="bg-muted" href="/api/reports/metrics-csv">Monthly metrics CSV</Link>
-        </div>
-      </SectionCard>
-    </AppShell>
-  );
+
+export default function ReportsPage() {
+  requireSession();
+  return <AppShell><h1 className="text-2xl font-semibold">Reports</h1><SectionCard title="Exports"><div className="flex gap-2"><Link href="/api/reports/funding-summary-pdf" className="bg-teal-700 text-white">Funding PDF</Link><Link href="/api/reports/referral-csv" className="bg-slate-100">Referral CSV</Link><Link href="/api/reports/metrics-csv" className="bg-slate-100">Metrics CSV</Link></div></SectionCard></AppShell>;
 }

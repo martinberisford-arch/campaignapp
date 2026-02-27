@@ -7,11 +7,3 @@ export const referralSourceLabels: Record<string, string> = {
   GP: "GP",
   OTHER: "Other"
 };
-
-export const awarenessDefaults = [
-  { title: "Autism Awareness Month", month: 4, day: 1 },
-  { title: "World Mental Health Week", month: 5, day: 13 },
-  { title: "Volunteers’ Week", month: 6, day: 3 },
-  { title: "Celebrating Neurodiversity Week", month: 3, day: 18 },
-  { title: "Young Carers Week", month: 6, day: 10 }
-];

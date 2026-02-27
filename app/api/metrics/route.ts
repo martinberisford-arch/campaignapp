@@ -3,25 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const schema = z.object({
-  month: z.string(),
-  facebookFollowers: z.number().int().nonnegative(),
-  facebookEngagement: z.number().int().nonnegative().optional(),
-  sessionsDelivered: z.number().int().nonnegative(),
-  familiesAttendingSessions: z.number().int().nonnegative(),
-  volunteerCount: z.number().int().nonnegative(),
-  fundingApplicationsSubmitted: z.number().int().nonnegative(),
-  fundingAwarded: z.number().nonnegative()
-});
+const schema = z.object({ month: z.string(), facebookFollowers: z.number(), sessionsDelivered: z.number(), familiesAttendingSessions: z.number(), volunteerCount: z.number(), fundingApplicationsSubmitted: z.number(), fundingAwarded: z.number(), facebookEngagement: z.number().optional() });
 
 export async function POST(req: Request) {
-  const json = await req.json();
-  const data = schema.parse(json);
-  const month = new Date(`${data.month}-01`);
-  await prisma.monthlyMetrics.upsert({
-    where: { month },
-    create: { ...data, month, facebookEngagement: data.facebookEngagement ?? 0 },
-    update: { ...data, facebookEngagement: data.facebookEngagement ?? 0 }
-  });
+  const body = schema.parse(await req.json());
+  const month = new Date(`${body.month}-01`);
+  await prisma.monthlyMetrics.upsert({ where: { month }, create: { ...body, month }, update: body });
   return Response.json({ ok: true });
 }

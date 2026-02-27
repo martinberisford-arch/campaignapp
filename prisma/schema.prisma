@@ -24,37 +24,23 @@ enum AssetCategory {
   TEMPLATE
 }
 
-enum ConsentStatus {
-  NOT_REQUIRED
-  OBTAINED
-  NOT_OBTAINED
-}
-
-enum Role {
-  ADMIN
-  USER
-}
-
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
   name         String
   passwordHash String
-  role         Role     @default(USER)
+  role         String   @default("USER")
   createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
 }
 
 model FamilyRecord {
-  id                    String         @id @default(cuid())
-  dateJoined            DateTime
-  referralSource        ReferralSource
-  attendedFirstSession  Boolean
-  stillAttending        Boolean
-  notes                 String?
-  deletedAt             DateTime?
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
+  id                   String         @id @default(cuid())
+  dateJoined           DateTime
+  referralSource       ReferralSource
+  attendedFirstSession Boolean
+  stillAttending       Boolean
+  notes                String?
+  deletedAt            DateTime?
 }
 
 model MonthlyMetrics {
@@ -68,44 +54,32 @@ model MonthlyMetrics {
   fundingApplicationsSubmitted Int
   fundingAwarded               Float
   deletedAt                    DateTime?
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
 }
 
 model AwarenessEvent {
-  id             String   @id @default(cuid())
-  title          String
-  eventDate      DateTime
-  notes          String?
-  draftIdeas     String?
-  resourceLinks  String[]
-  artworkName    String?
-  artworkMime    String?
-  artworkData    Bytes?
-  didWePost      Boolean  @default(false)
-  deletedAt      DateTime?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  eventDate     DateTime
+  notes         String?
+  draftIdeas    String?
+  resourceLinks String[]
+  didWePost     Boolean  @default(false)
+  deletedAt     DateTime?
 }
 
 model Asset {
-  id            String        @id @default(cuid())
+  id            String   @id @default(cuid())
   title         String
   category      AssetCategory
   fileName      String
   mimeType      String
   fileData      Bytes
-  consentStatus ConsentStatus
   notes         String?
-  uploadedAt    DateTime      @default(now())
+  uploadedAt    DateTime @default(now())
   deletedAt     DateTime?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
 }
 
 model AppSetting {
-  id                 String   @id @default(cuid())
-  retentionYears     Int      @default(3)
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id            String @id @default(cuid())
+  retentionYears Int   @default(3)
 }
