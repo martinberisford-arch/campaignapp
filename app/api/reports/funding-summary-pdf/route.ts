@@ -34,7 +34,7 @@ export async function GET() {
     `Awareness events delivered: ${events.length}`
   ]);
 
-  return new Response(pdf, {
+  return new Response(new Uint8Array(pdf), {
     headers: {
       "Content-Type": "application/pdf",
       "Content-Disposition": 'attachment; filename="funding-summary.pdf"'
