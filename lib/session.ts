@@ -1,11 +1,17 @@
-import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/lib/auth";
+import { SESSION_COOKIE, verifySessionToken } from "@/lib/auth";
 
 export async function requireSession() {
-  const session = await getServerSession(authOptions);
+  const token = cookies().get(SESSION_COOKIE)?.value;
+  if (!token) {
+    redirect("/login");
+  }
+
+  const session = verifySessionToken(token);
   if (!session) {
     redirect("/login");
   }
+
   return session;
 }

@@ -10,7 +10,7 @@ A warm, lightweight internal dashboard for neurodivergent-family support chariti
 - Asset Library with upload/search/filter/download
 - Funding Evidence report exports (PDF + CSV)
 - Privacy notice and retention settings (default 3 years)
-- Secure authentication with Admin/User roles
+- Secure cookie-based authentication with Admin/User roles
 - Soft delete on records
 
 ## Tech Stack
@@ -74,7 +74,7 @@ Default seeded admin login:
        openssl rand -base64 32
        ```
      - Paste the generated value.
-   - `NEXTAUTH_URL`
+   - `NEXTAUTH_URL (kept for deployment compatibility)`
      - Set to your live app URL, for example: `https://campaignapp.vercel.app`.
 4. In **Project → Settings → Build & Development Settings**:
    - Install Command: `npm install`
@@ -109,7 +109,7 @@ Important: if tokens were pasted in chat or committed anywhere, rotate them in U
 For this app, the required production env vars are:
 - `DATABASE_URL`
 - `NEXTAUTH_SECRET`
-- `NEXTAUTH_URL`
+- `NEXTAUTH_URL (kept for deployment compatibility)`
 
 These variables from your other project are **not used by this codebase** and will not fix NextAuth build issues by themselves:
 - `QSTASH_NEXT_SIGNING_KEY`
@@ -121,9 +121,9 @@ These variables from your other project are **not used by this codebase** and wi
 
 If you already added those, you can keep them, but they are optional/unused here.
 
-If NextAuth build errors continue:
+If auth build errors continue:
 1. Confirm `NEXTAUTH_SECRET` exists in Vercel for Production.
-2. Confirm `NEXTAUTH_URL` exactly matches deployed domain (including `https://`).
+2. Confirm `NEXTAUTH_URL (kept for deployment compatibility)` exactly matches deployed domain (including `https://`).
 3. Confirm `DATABASE_URL` is a valid Neon pooled connection string and the database is reachable.
 
 ### Notes for known build issues
